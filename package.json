@@ -3,6 +3,12 @@
     "version": "1.0.0",
     "description": "",
     "main": "app.js",
-    "author": "",
+    "scripts": {
+        "test": "jest"
+    },
+    "devDependencies": {
+    "jest": "^29.0.0" 
+    },
+    "author": "Abhishek Kuradia",
     "license": "ISC"
 }

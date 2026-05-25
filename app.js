@@ -25,6 +25,7 @@ const server = http.createServer((req, res) => {
     }
 })
 
+module.exports = server;
 
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`);
