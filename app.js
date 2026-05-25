@@ -14,7 +14,7 @@ const server = http.createServer((req, res) => {
                 res.end('Internal Server Error');
                 return;
             }
-
+            console.log(req.socket.remoteAddress);
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(data);
         })
