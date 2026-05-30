@@ -22,6 +22,8 @@ resource "aws_vpc" "custom_vpc" {
 resource "aws_subnet" "public_subnet" {
     vpc_id = aws_vpc.custom_vpc.id
     cidr_block = "15.4.1.0/24"
+    availability_zone = "ap-south-1a"
+    map_public_ip_on_launch = true
     tags = {
         Name = "public_subnet"
     }
@@ -30,6 +32,7 @@ resource "aws_subnet" "public_subnet" {
 resource "aws_subnet" "private_subnet" {
     vpc_id = aws_vpc.custom_vpc.id
     cidr_block = "15.4.2.0/24"
+    availability_zone = "ap-south-1a"
     tags = {
         Name = "private_subnet"
     }
@@ -72,28 +75,29 @@ resource "aws_instance" "web_server" {
     ami = "ami-07a00cf47dbbc844c"
     instance_type = "t2.medium"
     subnet_id = aws_subnet.public_subnet.id
-    security_groups = [aws_security_group.customSG.name]
+    vpc_security_group_ids = [aws_security_group.customSG.id]
+    associate_public_ip_address = true
     tags = {
         Name = "web_server"
     }
-    user_data = <<-EOF
-                #!/bin/bash
-                sudo apt update -y
-                sudo apt install docker.io -y
-                sudo systemctl start docker
-                sudo systemctl enable docker
-                sudo apt update -y
-                sudo apt update
-                sudo apt install fontconfig openjdk-21-jre
-                java -version
-                sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
-                https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
-                echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
-                https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
-                /etc/apt/sources.list.d/jenkins.list > /dev/null
-                sudo apt update
-                sudo apt install jenkins -y
-                sudo systemctl start jenkins
-                sudo systemctl enable jenkins
-            EOF
+    user_data =<<-EOF
+    #!/bin/bash
+    sudo apt update -y
+    sudo apt install docker.io -y
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    sudo apt update -y
+    sudo apt update
+    sudo apt install fontconfig openjdk-21-jre -y
+    java -version
+    sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc \
+    https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+    echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc]" \
+    https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+    /etc/apt/sources.list.d/jenkins.list > /dev/null
+    sudo apt update
+    sudo apt install jenkins -y
+    sudo systemctl start jenkins
+    sudo systemctl enable jenkins
+    EOF
 }
