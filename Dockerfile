@@ -1,6 +1,8 @@
 FROM node:18-alpine
 WORKDIR /app
-COPY . .
-EXPOSE 9000
+COPY package*.json ./
 RUN npm install
+COPY . .
+USER node
+EXPOSE 9000
 CMD ["node", "app.js"]
