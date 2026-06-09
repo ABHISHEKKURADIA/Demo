@@ -6,6 +6,7 @@ pipeline {
             steps {
                 //Pulls Latest repo
                 echo "Building"
+                checkout scm
             }    
         }
         stage('Test')
